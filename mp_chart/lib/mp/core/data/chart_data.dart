@@ -331,7 +331,7 @@ class ChartData<T extends IDataSet<Entry>> {
       // add the entry to the dataset
       if (!set.addEntry(e)) return;
 
-      calcMinMax2(e, set.getAxisDependency());
+      //calcMinMax2(e, set.getAxisDependency());
     }
   }
 
@@ -409,7 +409,7 @@ class ChartData<T extends IDataSet<Entry>> {
       bool removed = set.removeEntry1(e);
 
       if (removed) {
-        calcMinMax1();
+        //calcMinMax1();
       }
 
       return removed;

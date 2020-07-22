@@ -18,6 +18,7 @@ import 'package:mp_chart/mp/core/utils/color_utils.dart';
 import 'package:mp_chart/mp/core/utils/painter_utils.dart';
 import 'package:mp_chart/mp/core/utils/utils.dart';
 import 'package:mp_chart/mp/core/view_port.dart';
+import 'dart:developer';
 
 class LegendRenderer extends Renderer {
   /// paint for the legend labels
@@ -155,14 +156,15 @@ class LegendRenderer extends Renderer {
               // add label to the last entry
               label = data.getDataSetByIndex(i).getLabel();
             }
-
-            _computedEntries.add(LegendEntry(
-                label,
-                dataSet.getForm(),
-                dataSet.getFormSize(),
-                dataSet.getFormLineWidth(),
-                dataSet.getFormLineDashEffect(),
-                clrs[j]));
+            if (label.length != 0) {
+              _computedEntries.add(LegendEntry(
+                  label,
+                  dataSet.getForm(),
+                  dataSet.getFormSize(),
+                  dataSet.getFormLineWidth(),
+                  dataSet.getFormLineDashEffect(),
+                  clrs[j]));
+            }
           }
         }
       }
@@ -183,7 +185,8 @@ class LegendRenderer extends Renderer {
   TextPainter getLabelPainter() {
     var fontFamily = _legend.typeface?.fontFamily;
     var fontWeight = _legend.typeface?.fontWeight;
-    return PainterUtils.create(_legendLabelPaint, null, _legend.textColor, _legend.textSize,
+    return PainterUtils.create(
+        _legendLabelPaint, null, _legend.textColor, _legend.textSize,
         fontFamily: fontFamily, fontWeight: fontWeight);
   }
 
@@ -206,7 +209,8 @@ class LegendRenderer extends Renderer {
     LegendHorizontalAlignment horizontalAlignment = _legend.horizontalAlignment;
     LegendVerticalAlignment verticalAlignment = _legend.verticalAlignment;
     LegendDirection direction = _legend.direction;
-    double defaultFormSize = Utils.convertDpToPixel(_legend.formSize);
+
+    double defaultFormSize = _legend.formSize;
 
     // space between the entries
     double stackSpace = Utils.convertDpToPixel(_legend.stackSpace);
@@ -293,9 +297,7 @@ class LegendRenderer extends Renderer {
           for (int i = 0, count = entries.length; i < count; i++) {
             LegendEntry e = entries[i];
             bool drawingForm = e.form != LegendForm.NONE;
-            double formSize = e.formSize.isNaN
-                ? defaultFormSize
-                : Utils.convertDpToPixel(e.formSize);
+            double formSize = e.formSize.isNaN ? defaultFormSize : e.formSize;
 
             if (i < calculatedLabelBreakPoints.length &&
                 calculatedLabelBreakPoints[i]) {
@@ -448,8 +450,8 @@ class LegendRenderer extends Renderer {
     LegendForm form = entry.form;
     if (form == LegendForm.DEFAULT) form = legend.shape;
 
-    final double formSize = Utils.convertDpToPixel(
-        entry.formSize.isNaN ? legend.formSize : entry.formSize);
+    final double formSize =
+        entry.formSize.isNaN ? legend.formSize : entry.formSize;
     final double half = formSize / 2;
 
     switch (form) {
